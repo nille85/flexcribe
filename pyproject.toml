@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "flexcribe"
+version = "0.1.0"
+description = "Recording and transcription of audio"
+authors = ["Niels <niels.holvoet@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyaudio = "^0.2.14"
+openai-whisper = {git = "https://github.com/openai/whisper.git"}
+mutagen = "^1.47.0"
+gradio = "^4.37.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
