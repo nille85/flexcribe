@@ -2,19 +2,17 @@ import pyaudio
 import wave
 
 class AudioRecorder:
-    def __init__(self, file_manager):
-        self.file_manager = file_manager
+    def __init__(self):
         self.audio = pyaudio.PyAudio()
         self.stream = None
         self.is_recording = False
         self.frames = []
         self.current_filename = None
 
-    def start_recording(self):
+    def start_recording(self, filename):
         if self.is_recording:
             return "Already recording. Stop the current recording first."
-        
-        self.current_filename = self.file_manager.generate_filename()
+        self.current_filename = filename
         self.is_recording = True
         self.frames = []
         self.stream = self.audio.open(format=pyaudio.paInt16,
@@ -47,7 +45,7 @@ class AudioRecorder:
         wf.setframerate(44100)
         wf.writeframes(b''.join(self.frames))
         wf.close()
-        self.file_manager.add_audio_file(self.current_filename)
+
 
     def __del__(self):
         self.audio.terminate()

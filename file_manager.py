@@ -9,17 +9,16 @@ class FileManager:
         self.transcriptions_dir = transcriptions_dir
         os.makedirs(self.recordings_dir, exist_ok=True)
         os.makedirs(self.transcriptions_dir, exist_ok=True)
-        self.audio_files = self.get_audio_files()
+
 
     def generate_filename(self):
         unique_id = str(uuid.uuid4())
         return os.path.join(self.recordings_dir, f"recorded_audio_{unique_id}.wav")
 
-    def add_audio_file(self, filename):
-        self.audio_files.append(os.path.basename(filename))
 
     def get_audio_files(self):
-        return [f for f in os.listdir(self.recordings_dir) if f.endswith('.wav')]
+        audio_files = [f for f in os.listdir(self.recordings_dir) if f.endswith('.wav')]
+        return audio_files
 
     def get_audio_metadata(self, audio_file):
         full_path = os.path.join(self.recordings_dir, audio_file)

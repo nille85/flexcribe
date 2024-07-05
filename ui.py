@@ -5,6 +5,12 @@ import os
 def create_gradio_interface():
     app = AppService()
     
+    def stop_and_refresh_audio_files():
+        status = app.stop_recording()
+        dropdown =  gr.Dropdown(label="Select Audio File", choices=app.get_audio_files())
+        return [status,dropdown]
+
+
     with gr.Blocks() as interface:
         gr.Markdown("# Flexcribe")
         
@@ -15,8 +21,8 @@ def create_gradio_interface():
         status_output = gr.Textbox(label="Status")
         
         with gr.Row():
-            audio_files = gr.Dropdown(label="Select Audio File", choices=app.get_audio_files())
-            refresh_btn = gr.Button("Refresh Audio Files")
+            audio_files_dropdown = gr.Dropdown(label="Select Audio File", choices=app.get_audio_files())
+           
         
         audio_player = gr.Audio(label="Audio Player", type="filepath")
         audio_metadata = gr.JSON(label="Audio Metadata")
@@ -28,35 +34,40 @@ def create_gradio_interface():
         save_status = gr.Textbox(label="Save Status")
         
         start_btn.click(app.start_recording, outputs=status_output)
-        stop_btn.click(app.stop_recording, outputs=status_output)
+        stop_btn.click(stop_and_refresh_audio_files, outputs=[status_output, audio_files_dropdown])
         
-        refresh_btn.click(lambda: app.get_audio_files(), outputs=audio_files)
+   
         
+
+
         def update_audio_player_and_metadata(audio_file):
+
             if audio_file:
                 full_path = os.path.join(app.file_manager.recordings_dir, audio_file)
                 metadata = app.get_audio_metadata(audio_file)
                 return full_path, metadata
             return None, None
         
-        audio_files.change(
+        
+
+        audio_files_dropdown.select(
             update_audio_player_and_metadata,
-            inputs=audio_files,
+            inputs=audio_files_dropdown,
             outputs=[audio_player, audio_metadata]
         )
         
         transcribe_btn.click(
             app.transcribe_audio,
-            inputs=audio_files,
+            inputs=audio_files_dropdown,
             outputs=[transcription_output, audio_metadata],
             show_progress=True,
         )
         
-        audio_files.change(app.load_transcription, inputs=audio_files, outputs=transcription_output)
+        audio_files_dropdown.select(app.load_transcription, inputs=audio_files_dropdown, outputs=transcription_output)
         
         save_transcription_btn.click(
             app.save_edited_transcription,
-            inputs=[audio_files, transcription_output],
+            inputs=[audio_files_dropdown, transcription_output],
             outputs=save_status
         )
     
