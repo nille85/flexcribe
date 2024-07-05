@@ -1,7 +1,7 @@
 import whisper
 
 class AudioTranscriber:
-    def __init__(self, model_size="base"):
+    def __init__(self, model_size="large"):
         self.model = whisper.load_model(model_size)
 
     def transcribe(self, audio_file_path, progress_callback=None):

@@ -6,11 +6,12 @@ import os
 class AppService:
     def __init__(self):
         self.file_manager = FileManager(recordings_dir="data/recordings", transcriptions_dir="data/transcriptions")
-        self.recorder = AudioRecorder(self.file_manager)
-        self.transcriber = AudioTranscriber()
+        self.recorder = AudioRecorder()
+        self.transcriber = AudioTranscriber(model_size="large")
 
     def start_recording(self):
-        return self.recorder.start_recording()
+        filename = self.file_manager.generate_filename()
+        return self.recorder.start_recording(filename)
 
     def stop_recording(self):
         return self.recorder.stop_recording()
